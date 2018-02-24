@@ -1,21 +1,21 @@
 # rbm
 Binary Binary Restricted Boltzmann Machines with 6 different implementations:
-    1) pure numpy
-    2) pytorch
-    3) tensorflow
-    4) mxnet ndarray
-    5) mxnet symbolic API
-    6) mxnet gluon
+1. pure numpy
+2. pytorch
+3. tensorflow
+4. mxnet ndarray
+5. mxnet symbolic API
+6. mxnet gluon.
 
-Some code is a little overdesigned, because I want this project to help me learn and evaluate these deep learning frameworks.
+Some code are a little overdesigned, because I want this project to help me learn and evaluate these deep learning frameworks.
 
 CDk is used in the training, PDk can be added easily.
 Other RBMs such as Binary-Gaussian RBM can also be extended easily.
 
-## Theory:
+## Theory
 http://www.deeplearning.net/tutorial/rbm.html#rbm
 
-## Code Ref:
+## Code Ref
 http://www.cs.toronto.edu/~hinton/code/rbm.m
 It should be noticed that, the CD-k steps we used and given in most papers is a little different from the hinton's version.
 Forward step and gradient fomula both has some changes. The results are the same.
@@ -59,4 +59,4 @@ print(item.mse, item.cross_entropy, v, item.v_recon)
 ```
 
 ## *License*
-[MIT License]()     
+[MIT License](https://github.com/yagweb/rbm/blob/master/LICENCE)     

@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import mxnet as mx
 from mxnet import nd
@@ -201,7 +200,7 @@ class Momentum(mx.optimizer.Optimizer):
         self._update_impl(index, weight, grad, state)
     
 def MomentumOptimizer(model, lr = 0.01, momentum = 0.9, name = 'momentum'):
-#    name = 'sdg'  # Its also work
+#    name = 'sdg'  # It also works, try it.
     return gluon.Trainer(model.collect_params(), 
         name, 
          {
