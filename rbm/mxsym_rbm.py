@@ -111,6 +111,7 @@ class BinaryBinaryRBM(object):
         for epoch in range(num_epoch):
             temp = []
             for batch_data in train_data:
+                batch_data = batch_data.as_in_context(self.ctx)
                 loss = criterion(batch_data)
                 optimizer.step(len(batch_data))
                 temp.append(loss)

@@ -76,9 +76,8 @@ class Xavier(mx.init.Initializer):
         mx.random.uniform(-scale, scale, out = arr)
             
 class BinaryBinaryRBM(nn.Block):
-    def __init__(self, n_visible = 0, n_hidden = 0, ctx = mx.cpu(), **kwargs):     
+    def __init__(self, n_visible = 0, n_hidden = 0, **kwargs):     
         super(BinaryBinaryRBM, self).__init__(**kwargs)
-        self.ctx = ctx
         self.n_visible = n_visible
         self.n_hidden = n_hidden
         with self.name_scope():
@@ -92,15 +91,10 @@ class BinaryBinaryRBM(nn.Block):
                                      init = mx.init.Zero(), shape = (n_hidden, )) # a
             self.v_bias = self.params.get('v_bias', grad_req='write', 
                                      init = mx.init.Zero(), shape = (n_visible, )) # b        
-        
-        self.reset_parameters()
-        
+                
         self.v2h_mapping = ProbabilityMappingUnit(self.W, self.h_bias)
         self.h2v_mapping = ProbabilityMappingUnitTranspose(self.W, self.v_bias)
-        
-    def reset_parameters(self, ctx = mx.cpu()):
-        self.collect_params().initialize(ctx=ctx)
-        
+                
     def sample_h_given_v(self, v : nd.NDArray):
         with v.context:
             return self.v2h_mapping.sample(v)
@@ -117,8 +111,10 @@ class BinaryBinaryRBM(nn.Block):
         v_recon = self.h2v_mapping.propgate(h_probs)
         return ReconstructItem(v, v_recon)
     
-    def fit(self, data, batch_size, shuffle = False, 
+    def fit(self, data, batch_size, ctx = mx.cpu(), shuffle = False, 
             num_epoch = 50, lr = 0.1, momentum  = 0.9, k = 1):
+        self.collect_params().initialize(ctx = ctx)
+        
         if not isinstance(data, nd.NDArray):
             data = nd.array(data)
             
@@ -134,6 +130,7 @@ class BinaryBinaryRBM(nn.Block):
         for epoch in range(num_epoch):
             temp = []
             for batch_data in train_data:
+                batch_data = batch_data.as_in_context(ctx)
                 loss = criterion(batch_data)
                 optimizer.step(len(batch_data))
                 temp.append(loss)
@@ -200,7 +197,7 @@ class Momentum(mx.optimizer.Optimizer):
         self._update_impl(index, weight, grad, state)
     
 def MomentumOptimizer(model, lr = 0.01, momentum = 0.9, name = 'momentum'):
-#    name = 'sdg'  # It also works, try it.
+#    name = 'sgd'  # It also works, try it.
     return gluon.Trainer(model.collect_params(), 
         name, 
          {
